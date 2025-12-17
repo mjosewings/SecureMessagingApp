@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <title>Secure Messaging Dashboard</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+<!-- Sidebar -->
+<aside class="sidebar">
+    <div class="brand">
+        <div class="logo">◆</div>
+        <div class="brand-text">Your Logo</div>
+    </div>
+    <nav class="nav">
+        <a class="nav-item active">Dashboard</a>
+        <a class="nav-item">Messages</a>
+        <a class="nav-item">Transactions</a>
+        <a class="nav-item">Departments</a>
+        <a class="nav-item">Reports</a>
+        <a class="nav-item">Settings</a>
+    </nav>
+    <div class="nav-footer">
+        <button id="startServerBtn">Run Server</button>
+        <button id="stopServerBtn">Stop Server</button>
+        <span id="serverStatus" style="margin-left: 10px; font-weight: bold; color: #ef4444;">Server: Stopped</span>
+        <div class="server-url">
+            <label>Server URL</label>
+            <input id="serverUrl" value="http://127.0.0.1:8000" />
+            <button id="fetchKeyBtn">Fetch Public Key</button>
+        </div>
+    </div>
+</aside>
+
+<!-- Main content -->
+<main class="content">
+    <header class="topbar">
+        <div class="hello">
+            <h2>Hello, Maria</h2>
+            <p>Secure Messaging • Today</p>
+        </div>
+        <div class="actions">
+            <button class="icon-btn">🔔</button>
+            <button class="icon-btn">⚙️</button>
+            <div class="avatar">MJ</div>
+        </div>
+    </header>
+
+    <!-- Metric cards -->
+    <section class="grid three">
+        <div class="card metric">
+            <div class="metric-head">
+                <div>
+                    <h3>Total Messages</h3>
+                    <p id="metricTotal">—</p>
+                </div>
+                <canvas id="sparkTotal" height="36"></canvas>
+            </div>
+        </div>
+        <div class="card metric">
+            <div class="metric-head">
+                <div>
+                    <h3>Valid HMAC</h3>
+                    <p id="metricValid">—</p>
+                </div>
+                <canvas id="sparkValid" height="36"></canvas>
+            </div>
+        </div>
+        <div class="card metric">
+            <div class="metric-head">
+                <div>
+                    <h3>Tampered</h3>
+                    <p id="metricTampered">—</p>
+                </div>
+                <canvas id="sparkTampered" height="36"></canvas>
+            </div>
+        </div>
+    </section>
+
+    <!-- Outlay and Analytics -->
+    <section class="grid two">
+        <div class="card">
+            <div class="card-head">
+                <h3>Outlay</h3>
+                <div class="segmented">
+                    <button data-window="1h" class="seg active">1h</button>
+                    <button data-window="24h" class="seg">24h</button>
+                    <button data-window="7d" class="seg">7d</button>
+                </div>
+            </div>
+            <canvas id="outlayChart" height="120"></canvas>
+        </div>
+
+        <div class="card">
+            <div class="card-head space-top">
+                <h3>Analytics</h3>
+                <select id="deptFilter" multiple size="6" class="multi"></select>
+            </div>
+            <div class="bar-list" id="analyticsList"></div>
+        </div>
+    </section>
+
+    <!-- Income and Latest Messages -->
+    <section class="grid two">
+        <div class="card">
+            <div class="card-head">
+                <h3>Income (by Department)</h3>
+            </div>
+            <canvas id="incomeChart" height="120"></canvas>
+        </div>
+
+        <div class="card">
+            <div class="card-head">
+                <h3>Latest Messages</h3>
+            </div>
+            <ul id="latestList" class="latest"></ul>
+        </div>
+    </section>
+
+    <!-- Send a secure message -->
+    <section class="card">
+        <div class="card-head">
+            <h3>Send a Secure Message</h3>
+        </div>
+        <div class="form-grid">
+            <label>Department <input id="department" value="Computer Science" /></label>
+            <label>Student ID <input id="studentId" value="A01234567" /></label>
+            <label>Name <input id="name" value="Maria Joseph" /></label>
+            <label>Email <input id="email" value="maria@example.com" /></label>
+            <label class="col-span-2">Message
+                <textarea id="message" rows="4">Hello from the secure client!</textarea>
+            </label>
+        </div>
+        <div class="form-actions">
+            <button id="sendBtn">Encrypt & Send</button>
+            <button id="trainBtn">Train Anomaly (10 msgs)</button>
+        </div>
+        <pre id="resultArea" class="mono"></pre>
+        <pre id="pubKeyArea" class="mono small"></pre>
+    </section>
+</main>
+<script type="module" src="renderer.js"></script>
+</body>
+</html>
