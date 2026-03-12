@@ -30,12 +30,31 @@ const els = {
     latestList: document.getElementById('latestList'),
     deptFilter: document.getElementById('deptFilter'),
     segButtons: document.querySelectorAll('.seg'),
-    serverStatus: document.getElementById('serverStatus')
+    serverStatus: document.getElementById('serverStatus'),
+    lastUpdated: document.getElementById('lastUpdated'),
+    lastSendStatus: document.getElementById('lastSendStatus'),
+    cryptoTimeline: document.getElementById('cryptoTimeline')
 };
 
 let serverPublicKeyPem = '';
 let outlayChart, incomeChart, sparkTotal, sparkValid, sparkTampered;
 let serverProcess = null;
+const timelineSteps = Array.from(document.querySelectorAll('.crypto-step'));
+
+function setTimeline(state) {
+    timelineSteps.forEach(step => {
+        step.classList.remove('active', 'completed');
+    });
+    if (state === 'encrypting') {
+        timelineSteps[0]?.classList.add('active', 'completed');
+        timelineSteps[1]?.classList.add('active');
+    } else if (state === 'sent-ok') {
+        timelineSteps.forEach(s => s.classList.add('completed'));
+    } else if (state === 'sent-error') {
+        timelineSteps[0]?.classList.add('completed');
+        timelineSteps[1]?.classList.add('completed');
+    }
+}
 
 // --- Server status ---
 async function updateServerStatus() {
@@ -44,13 +63,19 @@ async function updateServerStatus() {
         if (resp.ok) {
             els.serverStatus.textContent = 'Server: Running';
             els.serverStatus.style.color = '#10b981';
+            els.sendBtn.disabled = false;
+            els.trainBtn.disabled = false;
         } else {
             els.serverStatus.textContent = 'Server: Stopped';
             els.serverStatus.style.color = '#ef4444';
+            els.sendBtn.disabled = true;
+            els.trainBtn.disabled = true;
         }
     } catch {
         els.serverStatus.textContent = 'Server: Stopped';
         els.serverStatus.style.color = '#ef4444';
+        els.sendBtn.disabled = true;
+        els.trainBtn.disabled = true;
     }
 }
 
@@ -123,15 +148,21 @@ els.fetchKeyBtn.addEventListener('click', async () => {
         if (!resp.ok) throw new Error(`Status ${resp.status}`);
         serverPublicKeyPem = await resp.text();
         els.pubKeyArea.textContent = serverPublicKeyPem;
+        els.lastSendStatus.textContent = 'Public key fetched. Ready to send securely.';
     } catch (err) {
         els.pubKeyArea.textContent = `[ERROR] ${err.message}`;
+        els.lastSendStatus.textContent = 'Failed to fetch public key. Check server URL.';
     }
 });
 
 // --- Send message ---
 els.sendBtn.addEventListener('click', async () => {
     if (!serverPublicKeyPem) { els.resultArea.textContent = 'Fetch the public key first.'; return; }
+    if (els.sendBtn.disabled) return;
     try {
+        els.sendBtn.disabled = true;
+        els.sendBtn.textContent = 'Encrypting…';
+        setTimeline('encrypting');
         const studentPayload = {
             department: els.department.value,
             studentId: els.studentId.value,
@@ -175,10 +206,16 @@ els.sendBtn.addEventListener('click', async () => {
         });
         const data = await resp.json();
         els.resultArea.textContent = JSON.stringify(data, null, 2);
-
+        els.lastSendStatus.textContent = `Last send: ${dayjs().format('HH:mm:ss')} • HMAC-verified and decrypted on server.`;
+        setTimeline('sent-ok');
         fetchMetrics();
     } catch (err) {
         els.resultArea.textContent = `[ERROR] ${err.message}`;
+        els.lastSendStatus.textContent = 'Send failed. See error output for details.';
+        setTimeline('sent-error');
+    } finally {
+        els.sendBtn.disabled = false;
+        els.sendBtn.textContent = 'Encrypt & Send';
     }
 });
 
@@ -219,7 +256,14 @@ async function fetchMetrics() {
         metrics.latest.forEach(m => {
             const li = document.createElement('li');
             const badge = `<span class="badge ${m.hmac_ok ? 'ok' : 'bad'}">${m.hmac_ok ? 'HMAC OK' : 'Tampered'}</span>`;
-            li.innerHTML = `<div>${m.name} • ${m.studentId}</div><div>${m.department}</div><div>${badge}</div>`;
+            li.innerHTML = `
+                <div>
+                    <div class="primary">${m.name || 'Unknown'} • ${m.studentId}</div>
+                    <div class="meta">${m.department}</div>
+                </div>
+                <div class="meta">Crypto: AES-256-CBC · HMAC-SHA256</div>
+                <div>${badge}</div>
+            `;
             els.latestList.appendChild(li);
         });
 
@@ -230,6 +274,9 @@ async function fetchMetrics() {
             opt.textContent = d;
             els.deptFilter.appendChild(opt);
         });
+        if (els.lastUpdated) {
+            els.lastUpdated.textContent = `Last updated: ${dayjs().format('HH:mm:ss')}`;
+        }
     } catch (err) {
         console.warn('Failed to fetch metrics:', err.message);
     }
