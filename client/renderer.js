@@ -8,6 +8,8 @@ const { exec } = window.require ? window.require('child_process') : {};
 const els = {
     serverUrl: document.getElementById('serverUrl'),
     fetchKeyBtn: document.getElementById('fetchKeyBtn'),
+    startServerBtn: document.getElementById('startServerBtn'),
+    stopServerBtn: document.getElementById('stopServerBtn'),
     pubKeyArea: document.getElementById('pubKeyArea'),
     resultArea: document.getElementById('resultArea'),
     sendBtn: document.getElementById('sendBtn'),
@@ -71,6 +73,11 @@ els.stopServerBtn?.addEventListener('click', () => {
     updateServerStatus();
     alert('Server stopped via GUI!');
 });
+
+if (!exec) {
+    if (els.startServerBtn) els.startServerBtn.disabled = true;
+    if (els.stopServerBtn) els.stopServerBtn.disabled = true;
+}
 
 setInterval(updateServerStatus, 2000); // Auto-refresh
 updateServerStatus(); // Initial check
