@@ -1,0 +1,12 @@
+[
+  {
+    "ts": "2026-03-12T02:30:42.308Z",
+    "department": "Computer Science",
+    "studentId": "A01234567",
+    "name": "Maria Joseph",
+    "email": "maria@example.com",
+    "algo": "RSA-OAEP/AES-256-CBC/HMAC-SHA256",
+    "plaintext": "{\"department\":\"Computer Science\",\"studentId\":\"A01234567\",\"name\":\"Maria Joseph\",\"email\":\"maria@example.com\",\"message\":\"Hello end-to-end\"}",
+    "hmac_ok": true
+  }
+]

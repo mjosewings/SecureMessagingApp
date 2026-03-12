@@ -5,13 +5,16 @@ import helmet from 'helmet';
 import fs from 'fs';
 import path from 'path';
 import crypto from 'crypto';
+import { fileURLToPath } from 'url';
 import { ensureRsaKeys, getPublicKeyPEM, rsaDecryptSessionKey, computeHmacSHA256, aes256cbcDecrypt } from './crypto.js';
 import { validateIncomingPayload, canonicalStringForHmac } from './models.js';
 import { computeMetrics } from './analytics/metrics.js';
 
 const app = express();
 const PORT = process.env.PORT || 8000;
-const LOG_PATH = path.join(process.cwd(), 'server', 'storage.json');
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+const LOG_PATH = path.join(__dirname, 'storage.json');
 
 // Ensure RSA keys exist
 ensureRsaKeys();

@@ -1,0 +1,17 @@
+{
+  "name": "secure-messaging-server",
+  "private": true,
+  "type": "module",
+  "main": "app.js",
+  "scripts": {
+    "dev": "node app.js",
+    "start": "node app.js",
+    "init-keys": "node initKeys.js"
+  },
+  "dependencies": {
+    "cors": "^2.8.5",
+    "express": "^4.21.2",
+    "helmet": "^7.2.0"
+  }
+}
+

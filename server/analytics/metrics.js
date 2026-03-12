@@ -1,8 +1,11 @@
 // server/analytics/metrics.js
 import fs from 'fs';
 import path from 'path';
+import { fileURLToPath } from 'url';
 
-const LOG_PATH = path.join(process.cwd(), 'server', 'storage.json');
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+const LOG_PATH = path.join(__dirname, '..', 'storage.json');
 
 export function computeMetrics() {
     let logs = [];
@@ -47,7 +50,7 @@ export function computeMetrics() {
     // Latest messages (last 5)
     const latest = logs.slice(-5).reverse().map(l => ({
         name: l.name,
-        student_id: l.studentId,
+        studentId: l.studentId,
         department: l.department,
         hmac_ok: l.hmac_ok
     }));
