@@ -12,6 +12,8 @@ This is intended as a clear, auditable reference implementation for a “hybrid 
 
 ![Secure Messaging Dashboard](assets/dashboard.png)
 
+*Figure: Electron-inspired glassy dashboard showing secure message metrics, HMAC integrity status, and the AES/RSA/HMAC crypto flow in real time.*
+
 ## Architecture
 
 - **Server** (`server/`): Express API that exposes a public key, accepts encrypted messages, verifies integrity, decrypts, and writes a small audit log used by metrics.
