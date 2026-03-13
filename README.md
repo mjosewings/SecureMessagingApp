@@ -8,6 +8,10 @@ A small full‑stack messaging demo designed for **secure and reliable communica
 
 This is intended as a clear, auditable reference implementation for a “hybrid crypto” flow (public‑key for key exchange, symmetric crypto for bulk data).
 
+## Dashboard
+
+![Secure Messaging Dashboard](assets/dashboard.png)
+
 ## Architecture
 
 - **Server** (`server/`): Express API that exposes a public key, accepts encrypted messages, verifies integrity, decrypts, and writes a small audit log used by metrics.
